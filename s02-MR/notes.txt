@@ -1,0 +1,441 @@
+MODULE 12: MODEL RELATIONSHIP
+
+No SQL
+	- Unstructured data
+		-- Refers to data that does not have a predefined structure/format.
+		-- Lacks a consistent organization and does not fit into traditional tabular rows and columns like structured data
+			--- EXAMPLES:
+				-- textual data (reports, social posts, articles)
+				-- media files (images, audio recording, videos)
+				-- sensor data (signals, data collected from IoT)
+				-- email conversations and chat
+	- Semi-structured data
+		-- it lies between the structured and unstructured data
+			--- Contains elements that provide a basic structure or metadata, allowing for some level of organization and querying
+			--- EXAMPLES:
+				-- XML documents
+				-- JSON files
+				-- Log files
+				-- web pages with HTML elements and metadata
+
+
+Types of data models used in NoSQL Database:
+	- key-value model
+		- The simplest data model, where data is stored as key-value pairs. Each key is unique and maps to corresponding value.
+		- Syntax:
+			db.collection.insert({ "key": "value" })
+
+	- document model
+		- data is stored in flexible, self describing documents (JSON or BJSON format)
+		-Syntax:
+			db.myPerson.insert({
+				"name": "Juan Dela Cruz",
+				"age": 25,
+				"email": "juandelacruz@gmail.com"
+			})
+
+	- column family model
+		- Model organizes data into columns rather than rows. It is suitable for handling large amounts of data and provides fast read and write operations.
+		- Syntax:
+			CREATE TABLE myTable(
+				id UUID PRIMARY KEY,
+				name text,
+				age int
+			)
+
+	- graph model
+		- Represents data and edges, allowing the efficient traversal of relationships
+// Cannot provide example/syntax due to the complexity. She'll show how to do later
+
+
+Modeling Relationships
+	- Is an important aspect of database design, regardless of whether it's relational database or a NoSQL database.
+	-Types of MR documents:
+		-- Embedded Documents
+			- an approach that embed related documents within the single document
+			Example:
+			{
+				"name": "Juan Dela Cruz",
+				"age": 25,
+				"email": "juandelacruz@gmail.com"
+				"orders": [
+					{
+						"order_id": "123",
+						"order_date": "2023-06-14",
+						"total_amount": 100
+					},
+					{
+						"order_id": "456",
+						"order_date": "2023-06-15",
+						"total_amount": 200
+					}
+				]
+			}
+
+
+		-- Referencing Documents
+			- Uses references to establish relationships between documents.
+			- Example:
+			
+			//User Document
+				{
+					"name": "Juan Dela Cruz",
+					"age": 25,
+					"email": "juandelacruz@gmail.com"
+					"orders": ["123", "456]
+				}
+
+			//Order Document
+				{
+					"order_id": "123",
+					"order_date": "2023-06-14",
+					"total_amount": 100
+				},
+				{
+					"order_id": "456",
+					"order_date": "2023-06-15",
+					"total_amount": 200
+				}
+
+Types of Relationships
+1.) One-to-one relationship
+	- This relationshi pmeans that a model is exclusively related to only one model.
+	Example:
+	Employee
+
+	Credentials
+		{
+			"id": "2023dev"
+			"firstName": "Juan",
+			"lastName": "Dela Cruz",
+			"age": 25,
+			"email": "juandelacruz@gmail.com"
+		}
+
+		{
+			"id": "2023dev"
+			"role": "DVT"
+			"team": "Technical Department"
+		}
+
+
+2.) One-to-many relationship
+	- One model is related to multiple other models, however the other models are only related into one.
+	Example:
+		Person -many email address
+		Blog - comments
+			
+		//A single blog can have multiple documents but each comment should only refer to a single blog
+	Example with code:
+	blog
+		{
+			"id": "blog2023",
+			"title": "This is an awesome blog",
+			"content": "tzhis is an awesome blog I created",
+			"creation": "2023-06-24"
+		}
+
+	comment document
+		{
+			"id": "blog6261comment",
+			"comment": "Awesome blog",
+			"author": "Juan Dela Cruz"
+			"blog_id": "blog6261"
+		},
+		{
+			"id": "blog6261comment",
+			"comment": "Meh. Not an awesome blog",
+			"author": "John Ibarra"
+			"blog_id": "blog6261"
+		}
+
+	SubDocument Array - array of subdocuments per single document
+
+3.) Many-to-many relationship
+	- The relationship of models wherein multiple document are related to multiple document.
+	Example
+	Books & Authors
+	
+	id 	name			price
+	1	Grayson Chronicles	2500
+	2	Red Sun			1500
+
+	id	name
+	1	JRR Tolkien
+	2	George RR Martin
+	3	Generic Author
+
+	Associative Entity - Created when you have many to many relationship
+	Example"
+	books_authors
+	
+	id	book_id		author_id
+	1	1		1
+
+	book
+	{
+		"id": "book1",
+		"name": "Grayson Chronicles",
+		"description": "A book about the Grayson",
+		"price": "2500"
+		"authors": [
+			{
+				"id": "bookAuthor1"
+				"author_id": "author1"
+			},
+			{
+				"id": "bookAuthor2"
+				"author_id": "author2"
+			}
+		]
+	}
+	
+	{	"id": "book2",
+		"name": "Red Sun",
+		"description": "What if the sun is red?",
+		"price": "1500"
+		"authors": [
+			{
+				"id": "bookAuthor1"
+				"author_id": "author1"
+			},
+		]
+	}
+	
+	authors
+	
+	{
+		"id": "author1",
+		"name": "Jeffrie Page",
+		"address": {
+			"street": "1 Shakespeare Drive",
+			"city": : "London",
+			"country": "United Kingdom"
+		}
+
+		"books": [
+			{
+				"id": "authored_book1",
+				"book_id": "book1",
+				"writtenOn": "1998-12-02"
+			}, 
+			{
+				"id": "authored_book2",
+				"book_id": "book2",
+				"writtenOn": "1998-01-04"
+			}
+		]
+	}
+
+	{
+		"id": "author2",
+		"name": "Mike Chapter",
+		"address": {
+			"street": "Block 2 Hamlet Street",
+			"city": : "Boston",
+			"country": "United States of America"
+		}
+
+		"books": [
+			{
+				"id": "authored_book1",
+				"book_id": "book1",
+				"writtenOn": "1998-12-02"
+			}, 
+			{
+				"id": "authored_book2",
+				"book_id": "book2",
+				"writtenOn": "1998-01-04"
+			}
+		]
+	}
+
+	Entity Relationship Diagram (ERD)
+		- This is a visualized relationship between model to another.
+
+
+CRUD Operations
+
+Shell is an interface in MongoDB that allows to input commands and perform CRUD operations on our databases
+
+C - Create
+	Three (3) commands:
+		db.collection.insert({})
+		db.collection.insertOne({})
+		db.collection.insertMany({})
+R - Read
+	Two (2) commands:
+		db.collection.find({})
+		db.collection.findOne({})
+		
+U - Update
+	Two (2) commands:
+		db.collection.updatedOne({})
+		db.collection.updateMany({})
+
+D - Delete
+	Two (2) commands:
+		db.collection.deleteOne({})
+		db.collection.deleteMany({})
+
+
+Comparison Query Operators [READ operation]
+$gt/$gte
+	- Allows us to find documents that have field number values greater than (gt) or equal to (gte) a specified value
+	-- syntax:
+		db.collection.find({ field: {$gt : value} })
+		db.collection.find({ field: {$gte : value} })
+			db.users.find({ age : { $gt: 50 } }).pretty();
+			db.users.find({ age : { $gte: 50 } }).pretty();
+
+//.pretty() helps organize your query
+
+$lt/$lte
+- Allows us to find documents that have field number values less than (lt) or equal to (lte) a specified value	.
+	-- syntax:
+		db.collection.find({ field: {$lt : value } })
+		db.collection.find({ field: {$lte : value } })
+			db.users.find({ age : { $lt: 50 } }).pretty();
+			db.users.find({ age : { $lte: 50 } }).pretty();
+
+$ne
+- Allows us to find documents that have field number values n ot equal to a specified value
+	-- syntax:
+		db.collection.find({ field : { $ne : value } })
+
+			db.users.find({ age : { $ne : 82 } })
+
+$in
+- Allows us to find documents with specific match criteria one field using different value
+	-- syntax:
+		db.collection.find ({ field : { $in : value } })
+
+			db.users.find({ lastName: : { $in : ["Hawkins", "Delos Santos"] } }).pretty();
+			db.users.find({ courses: : { $in : ["HTML", "ReactJS"] } }).pretty();
+
+
+
+Logical Query Operators
+$or
+- Allows us to find documents that match a single criteria from multiple documents provided search criteria
+	-- syntax:
+		db.collection.find({ $or : [ { fieldA : valueA}, { fieldB : valueB } ] })
+
+		db.collection.find({ $or : [ { firstName : "Neil"}, { age : "25" } ] }).pretty()
+		db.collection.find({ $or : [ { firstName : "Neil"}, { age : {$gt : 30} } ] }).pretty()
+
+$and
+- Allows us to find documents that matching multiple criteria in a single field
+	--syntax:
+		db.collection.find({ $and : [ { fieldA : valueA}, { fieldB : valueB } ] })
+
+		db.collection.find({ $and : [ { age : {$ne : 82} }, { age : {$ne : 76} } ] }).pretty()
+
+
+Field Projection
+- Retrieving documents are common operation that we do and by default MongoDB queries return the whole document as a response
+	- When dealing with complex data structures, there might be instances when fields are not useful for the query that we are trying to accomplish
+	- To help with readability of the values returned, we can include/exclude fields from the response.
+
+-- Inclusion
+	- allows us to include/add specific fields only when retrieving documents
+	- the value provided is 1 to denote that the field is being included
+		-- syntax:
+			db.collection.find({ criteria }, { field : 1})
+
+			db.users.find(
+				{
+					firstName: "Maria Clara"
+				},
+				{
+					firstName: 1,
+					lastName: 1,
+					contact: 1
+				}
+			).pretty();
+-- Exclusion
+	- allows us to exclude/remove specific fields only when retrieving documents
+	- the value provided is 0 t odenote that the field is being excluded
+		-- syntax:
+			db.collection.find({ criteria }, { field : 0})
+			
+			db.users.find(
+				{
+					firstName: "Maria Clara"
+				},
+				{
+					contact: 0,
+					department: 0
+				}
+			).pretty();
+
+Supressing the ID field
+- allows us to exclude the "_id" field in retrieving documents
+- When using field properties, field inclusion and exclusion may not be used at the same time
+- excluding the "_id" is the only exception to this code
+		-- syntax:
+			db.collection.find({ criteria }, { _id : 0})
+
+			db.users.find(
+				{
+					firstName: "Maria Clara"
+				},
+				{
+					firstName: 1,
+					lastName: 1,
+					contact: 1,
+					_id: 0
+				}
+			).pretty();
+
+Returning specific fields in embedded documents
+db.users.find(
+	{
+		firstName: "Maria Clara"
+	},
+	{
+		firstName: 1,
+		lastName: 1,
+		"contact.phone": 1,
+	}
+).pretty();
+
+Surpressing specific fields in embedded documents
+db.users.find(
+	{
+		firstName: "Maria Clara"
+	},
+	{
+		"contact.phone": 0,
+	}
+).pretty();
+
+Project specific array elements in the returned array
+$slice
+-Allows us to retrieve only 1 element that matches the search criteria
+
+db.users.find(
+	{
+		"namearr":
+			{
+				name: "Stepehen"
+			}
+	},
+	{
+		"namearr":
+			{
+				$slice : 1
+			}
+	}
+).pretty();
+
+db.users.find({}, { courses: {$slice : 1} }).pretty();
+
+$regex
+- Allows us to find documents that match a specific string pattern using regular expressions
+	-- syntax:
+		db.collection.find({ field : $regex : 'pattern', $options: '$optionValue' })
+
+case sensitive query
+db.users.find({ firstName: {$regex : 'N'} }).pretty();
+db.users.find({ firstName: {$regex : 'j', options: '$i'} }).pretty();
